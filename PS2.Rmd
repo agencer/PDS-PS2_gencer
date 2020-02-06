@@ -56,16 +56,32 @@ rm(list = ls())
 
 \subsection{Write a for loop that iterates over the numbers 1 to 7 and prints the cube of each number using print().}
 
-```{r Q1, include=TRUE, warning = FALSE, message = FALSE}
-
+```{r Q1 Part 1, include=TRUE, warning = FALSE, message = FALSE}
+for (i in 1:7){
+  print(i^3)
+}
 ```
 
 \subsection{Write a for loop that does 1000 simulations of where two fair dice are rolled. Use the function set.seed(14) so that we all have the same values when using the sample() function.}
   \begin{itemize}
     \item Write the loop such that if the two dice total to values 8,9,10,11,12 the game ends immediately
     \item If the first roll does not equal one of those five values continue to roll the dice until you roll either a 2 or a 6
-    \item What is the average number of dice casts per game
+    \item What is the average number of dice casts per game?
   \end{itemize}
+  
+```{r Q1 Part 2, include=TRUE, warning = FALSE, message = FALSE}
+set.seed(14)
+for (i in 1:1000){
+  how.I.roll <-sample(c(1:6), 2, replace=T)
+  print(how.I.roll)
+  if(i == 1 & sum(how.I.roll) >= 8){
+    break
+  } else if(how.I.roll[1] == 2 | how.I.roll[2] == 6) {
+    print(paste("Average number of dice casts is", i))
+    break
+  }
+}
+```
 \newpage
 
 
@@ -73,7 +89,7 @@ rm(list = ls())
 
 
 
-\section{Q2 - Functions} 
+\section{Q2 - PART1: Functions} 
 
 \subsection{Load the following data:}
 
@@ -87,16 +103,83 @@ http://politicaldatascience.com/PDS/Problem%20Sets/Problem%20Set%202/GSS-data.cs
 
 
 
+\section{A2 - PART1: - Functions} 
+
+\subsection{Load the following data:}
+
+http://politicaldatascience.com/PDS/Problem%20Sets/Problem%20Set%202/GSS-data.csv
+
+```{r getting ready Q2 Part1, include=TRUE, warning = FALSE, message = FALSE}
+rm(list = ls())
+
+#   Let's import the dataset:
+library(readr)
+GSS_data <- read_csv("http://politicaldatascience.com/PDS/Problem%20Sets/Problem%20Set%202/GSS-data.csv")
+```
+
+\begin{enumerate}
+  \item Now create a function called vote.choice which can take one of three arguments: “Trump”, “Clinton”, or “Other”. The function should return the number of participants who voted for Trump when you input “Trump” into the function; the number of participants who voted for Clinton when you input “Clinton” into the function; and the number of participants that voted for neither when you input “Other”.
+  \item Now edit this function so that if a pre-defined object, numeric value or misspelled word is entered, the function returns the message “Please enter either ‘Trump’ ‘Clinton’ or ‘Other’ into the function to return a valid response”.
+\end{enumerate}
+
+```{r now there Q2 Part1, include=TRUE, warning = FALSE, message = FALSE, error = TRUE}
+
+#   Before we start working on our function, we should clean the dataset:
+library("tidyverse")
+
+number.voters <- GSS_data %>%
+  mutate(pres16 = as.factor(pres16)) %>%
+  group_by(pres16) %>%
+  tally()
+  
+levels(GSS_data$pres16)
+
+n.voter <- c(number.voters$n[1], number.voters$n[6], number.voters$n[7])
+names(n.voter) <- c("Clinton", "Other", "Trump")
+n.voter
+
+#   Let's generate that handsome function:
+vote.choice <- function(x){
+  if(x == "Trump"){
+    return(paste("The number of participants who voted for", x, "is", n.voter[x]))
+  } else if(x == "Clinton"){
+    return(paste("The number of participants who voted for", x, "is", n.voter[x]))
+  } else if(x == "Other"){
+    return(paste("The number of participants who voted for", x, "is", n.voter[x]))
+  } else {
+    stop("Please enter either ‘Trump’ ‘Clinton’ or ‘Other’ into the function!")
+  }
+}
+
+#   Now, let's see if it works or not!
+vote.choice("Trump")
+vote.choice("Clinton")
+vote.choice("Other")
+```
+
+\bigskip
+
+\bigskip
+
+```{r now there Q2 Part1 Error, include=TRUE, error = TRUE}
+#   What about the error message?
+vote.choice("Sanders")
+
+#   YES, it worksssss!
+```
+
+\newpage
 
 
-\section{Q2 - Functions} 
+
+\section{Q2 - PART2: Functions} 
 
 \subsection{Run the following code}
 
 
-```{r Q2 pack, include=TRUE, warning = FALSE, message = FALSE}
-#install.packages('fivethrityeight')
-library(fivethirtyeight)
+```{r Q2 packages, include=TRUE, warning = FALSE, message = FALSE}
+# install.packages('fivethrityeight')
+# library(fivethirtyeight)
 ```
 
 Now review the data in the cabinet_turnover object (this is loaded into your space when you load the library even though you cannot see it in the global space. You can also assign it to your own object if you’d like.).
@@ -113,8 +196,69 @@ $$Carter: 1461 \\ Reagan: 2922 \\ Bush \ 41: 1461 \\ Clinton: 2922 \\ Bush \ 43:
 
 
 
+\section{A2 - PART2: Functions} 
 
-\section{Q2 - Functions}
+\subsection{Run the following code}
+
+Now review the data in the cabinet_turnover object (this is loaded into your space when you load the library even though you cannot see it in the global space. You can also assign it to your own object if you’d like.).
+
+```{r Q2 Part 2 getting ready, include=TRUE, warning = FALSE, message = FALSE}
+#install.packages('fivethrityeight')
+rm(list = ls())
+library(fivethirtyeight)
+
+#   Let's import the data:
+data("cabinet_turnover")
+str(cabinet_turnover)
+```
+
+\begin{enumerate}
+  \item Create a function named appoint which allows you to type in the name of a president as an argument (i.e appoint(“Trump”)) and returns the proportion of time appointees spent serving each adminstration i.e the number of days appointees served for each administration, on average, divided by the number of
+days the particular president served.
+  \item To illustrate the average number of days all appointees served in the Reagan administration was 2140.959. Below you can see that Reagan served 2922 days. So appointees served 73% of Reagan’s administration, on average (2140.959/2922).
+  \item For simplicity, here are the number of days each president served:
+\end{enumerate}
+$$Carter: 1461 \\ Reagan: 2922 \\ Bush \ 41: 1461 \\ Clinton: 2922 \\ Bush \ 43: 2922 \\ Obama: 2922 \\ Trump: 1105$$
+
+```{r Q2 Part2, include=TRUE, warning = FALSE, message = FALSE}
+library("tidyverse")
+#detach(package:plyr)
+
+
+my.cab.to <- cabinet_turnover %>%
+  group_by(president) %>%
+  summarize(mean.length = mean(length, na.rm = TRUE))
+
+# Let's add the number of serving days as a vector:
+my.cab.to
+serving.dur <- c(1461, 2922, 1461, 2922, 2922, 2922, 1105)
+my.cab.to <- cbind(my.cab.to, serving.dur)
+
+my.cab.to <- my.cab.to %>%
+  mutate(prop.appoint.time = round(mean.length/serving.dur, digit = 4))
+
+appoint <- function(x){
+  return(paste("The proportion of time appointees spent serving", x, "administration is", my.cab.to$prop.appoint.time[my.cab.to$president == x]))
+}
+```
+
+
+```{r Q2 Part2 trial, include=TRUE, warning = FALSE, message = FALSE}
+#   Let's see if it works or not!
+appoint("Trump")
+appoint("Bush 41")
+appoint("Sanders")
+
+```
+
+
+
+
+\newpage
+
+
+
+\section{Q2 - PART3: Functions}
 
 Now you will use the "congress_age" data set from the "fivethirtyfive" package. Create a function called "congress_stats" that takes two arguments" congress and state.
 
