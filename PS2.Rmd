@@ -258,7 +258,7 @@ appoint("Sanders")
 
 
 
-\section{Q2 - PART3: Functions}
+\section{Q3 - PART2: Functions}
 
 Now you will use the "congress_age" data set from the "fivethirtyfive" package. Create a function called "congress_stats" that takes two arguments" congress and state.
 
@@ -266,3 +266,130 @@ Now you will use the "congress_age" data set from the "fivethirtyfive" package. 
   \item When you enter “congress” into the function it should return the average age of congressmembers for each congressional era. Your function should return 34 results which display the average age of congressmembers of an era as well as the congress. For example the most recent congress is the 113 Congress so one of the 34 results will be 57.6 113.
   \item Similarly, when you input “state” into the function, it should return the average age of congressmembers by state. The function will then return 50 results an example of one of the 50 is 53.4 TX.
 \end{itemize}
+
+\bigskip 
+
+\bigskip 
+
+\section{A3 - PART3: Functions} 
+
+```{r Q3 Part 2 getting ready, include=TRUE, warning = FALSE, message = FALSE}
+#install.packages('fivethrityeight')
+rm(list = ls())
+library(fivethirtyeight)
+```
+
+\bigskip 
+
+\subsection{When you enter “congress” into the function it should return the average age of congressmembers for each congressional era. Your function should return 34 results which display the average age of congressmembers of an era as well as the congress. For example the most recent congress is the 113 Congress so one of the 34 results will be 57.6 113.}
+
+\bigskip
+
+\subsection{ Similarly, when you input “state” into the function, it should return the average age of congressmembers by state. The function will then return 50 results an example of one of the 50 is 53.4 TX.}
+
+\bigskip
+
+In the beginning of the question, question clearly states that the function would take "two" arguments. However, in the rest of the question, it is clear that the question asks for a function with one argument that could take two values. Therefore, I have added both versions of the aforementioned questions. 
+
+\bigskip
+
+Let's see the first case where the function takes only one argument with two meaningful input:
+
+\bigskip 
+
+```{r Q3 Part 2 function-in-progress, message=FALSE, warning=FALSE, include=TRUE}
+require("tidyverse")
+library("dplyr")
+
+congress_stats <- function(X){
+  if (X == "congress"){
+    m.age.cong <- congress_age %>%
+      group_by(congress) %>%
+      summarize(m.age = mean(age, na.rm=TRUE))
+    print(m.age.cong)
+  } else if(X == "state") {
+    m.age.stat <- congress_age %>%
+      group_by(state) %>%
+      summarize(m.age = mean(age, na.rm=TRUE))
+    print(m.age.stat)    
+  } else {
+    print("Invalid Input! Please enter either 'congress' or 'state'.")
+  }
+}
+```
+
+\bigskip 
+
+Let's try our function:
+
+\bigskip
+
+```{r Q3 Part 2 one-two one-two, message=FALSE, warning=FALSE, include=TRUE}
+
+congress_stats("congress")
+congress_stats("state")
+congress_stats("gibrish")
+congress_stats(TRUE)
+congress_stats(100)
+```
+
+\bigskip
+
+Awesome!
+
+\bigskip
+
+Now, let's reconfigurate the same function to support two arguments:
+
+\bigskip
+
+```{r Q3 Part 2 function-in-progress V2, message=FALSE, warning=FALSE, include=TRUE}
+congress_stats.v2 <- function(X = ".", Y="."){
+  if (X == "congress"){
+    m.age.cong <- congress_age %>%
+      group_by(congress) %>%
+      summarize(m.age = mean(age, na.rm=TRUE))
+    print(m.age.cong)
+    if (Y == "state") {
+    m.age.stat <- congress_age %>%
+      group_by(state) %>%
+      summarize(m.age = mean(age, na.rm=TRUE))
+    print(m.age.stat)
+    }
+  } else {
+    if (Y == "state") {
+    m.age.stat <- congress_age %>%
+      group_by(state) %>%
+      summarize(m.age = mean(age, na.rm=TRUE))
+    print(m.age.stat)
+    } else {
+      print(paste("Invalid Input! Please enter either"))
+      print(paste("'congress' as the first argument or "))
+      print(paste("'state' as your second argument, or"))
+      print(paste("both."))
+    }
+  }
+}
+```
+
+\bigskip 
+
+Let's try our function:
+
+\bigskip
+
+```{r Q3 Part 2 one-two one-two V2, message=FALSE, warning=FALSE, include=TRUE}
+
+congress_stats.v2("congress")
+congress_stats.v2(, "state")
+congress_stats.v2("congress", "state")
+congress_stats.v2("gibrish")
+congress_stats.v2(TRUE)
+congress_stats.v2(100)
+```
+
+\bigskip
+
+Awesome!
+
+\bigskip
